@@ -13,7 +13,7 @@ Ext.define('sci.view.Info', {
         items: [
             {
                 xtype: 'panel',
-                title: 'About app',
+                title: 'About',
                 styleHtmlContent: true,
                 html: 'asdasd'
             }

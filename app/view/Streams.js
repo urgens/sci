@@ -1,19 +1,3 @@
-var itemTplWithPrevAll = '<div style="display: -webkit-box; -webkit-box-orient: horizontal;">'+
-                            '<div style="display: -webkit-box; width: 120px; height: 90px; margin-right: 20px">'+
-                                '<img width="120px" height="90px" src="{p}" />'+
-                            '</div>'+
-                            '<div style="display: -webkit-box; -webkit-box-flex: 1; -webkit-box-orient: vertical;">'+
-                            '<div class="{f}"><b>{n}</b></div>'+
-                            '<div>viewers: {v}</div>'+
-                            '<div>@{s}</div>'+
-                        '</div>';
-var itemTplNonPrevAll = '<div style="display: -webkit-box; -webkit-box-orient: horizontal;">'+
-                            '<div style="display: -webkit-box; -webkit-box-flex: 1; -webkit-box-orient: vertical;">'+
-                            '<div class="{f}"><b>{n}</b></div>'+
-                            '<div>viewers: {v}</div>'+
-                            '<div>@{s}</div>'+
-                        '</div>';
-
 Ext.define('sci.view.Streams', {
     extend: 'Ext.navigation.View',
     requires: [
@@ -28,6 +12,7 @@ Ext.define('sci.view.Streams', {
     config: {
         title: 'All',
         iconCls: 'team',
+        id: 'streamsWindow',
         navigationBar: {
             items: [
                 {
@@ -62,45 +47,21 @@ Ext.define('sci.view.Streams', {
         },
         listeners : {
             back: function() {
-                watchedStreamAll = null;
+                sci.app.watchedStreamIdAll = null;
                 Ext.getCmp('favoriteBtnAll').setHidden(true);
                 Ext.getCmp('refreshLiveBtnAll').setHidden(false);
-                //Ext.getCmp('selctRaceBtnAll').setHidden(false);
-                //TODO: show main buttons
             }
         },
         items: {
             xtype: 'list',
-            itemTpl: itemTplWithPrevAll,
-            title: 'All Streams',
+            //itemTpl: sci.app.itemTplWithPrevAll,
+            title: 'Streams',
             id: 'streamslistAll',
             plugins: [
                 {
                     id: 'streamslistPagingAll',
                     xclass: 'Ext.plugin.ListPaging',
-                    autoPaging: false,
-                    applyLoadMoreCmp: function(config) {
-                        config = Ext.merge(config, {
-                            html: this.getLoadTpl().apply({
-                                cssPrefix: Ext.baseCSSPrefix,
-                                message: this.getLoadMoreText()
-                            }),
-                            
-                            listeners: {
-                                tap: {
-                                    fn: function() {
-                                        var positionY = Ext.getCmp('streamslistPagingAll').getScroller().position.y;
-                                        itemsPageAll+=initItemsPageAll;
-                                        setRaceAll();
-                                        Ext.getCmp('streamslistPagingAll').getScroller().scrollTo(null, positionY);
-                                    },//this.loadNextPage,
-                                    scope: this,
-                                    element: 'element'
-                                }
-                            }
-                        });
-                        return Ext.factory(config, Ext.Component, this.getLoadMoreCmp());
-                    }
+                    autoPaging: false
                 }
             ],
             //n - player name (server)
