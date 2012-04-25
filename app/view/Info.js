@@ -7,8 +7,8 @@ Ext.define('sci.view.Info', {
     xtype: 'info',
     
     config: {
-        title: 'Home',
-        iconCls: 'home',
+        title: 'About',
+        iconCls: 'info',
         scrollable: 'vertical',
         items: [
             {

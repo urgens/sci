@@ -1,40 +1,33 @@
-var itemTplWithPrev = '<div style="display: -webkit-box; -webkit-box-orient: horizontal;">'+
+var itemTplWithPrevAll = '<div style="display: -webkit-box; -webkit-box-orient: horizontal;">'+
                             '<div style="display: -webkit-box; width: 120px; height: 90px; margin-right: 20px">'+
                                 '<img width="120px" height="90px" src="{p}" />'+
                             '</div>'+
                             '<div style="display: -webkit-box; -webkit-box-flex: 1; -webkit-box-orient: vertical;">'+
                             '<div class="{f}"><b>{n}</b></div>'+
-                            '<div>race: <tpl for="r">'+
-                                '<img src="resources/images/{t}.png" />'+
-                            '</tpl></div>'+
                             '<div>viewers: {v}</div>'+
                             '<div>@{s}</div>'+
                         '</div>';
-var itemTplNonPrev = '<div style="display: -webkit-box; -webkit-box-orient: horizontal;">'+
+var itemTplNonPrevAll = '<div style="display: -webkit-box; -webkit-box-orient: horizontal;">'+
                             '<div style="display: -webkit-box; -webkit-box-flex: 1; -webkit-box-orient: vertical;">'+
                             '<div class="{f}"><b>{n}</b></div>'+
-                            '<div>race: <tpl for="r">'+
-                                '<img src="resources/images/{t}.png" />'+
-                            '</tpl></div>'+
                             '<div>viewers: {v}</div>'+
                             '<div>@{s}</div>'+
                         '</div>';
 
-Ext.define('sci.view.Live', {
+Ext.define('sci.view.Streams', {
     extend: 'Ext.navigation.View',
     requires: [
         'Ext.data.proxy.JsonP',
         'Ext.data.Store',
         'Ext.TitleBar',
         'Ext.dataview.List',
-        'Ext.field.Select',
         'Ext.plugin.ListPaging'
     ],
-    xtype: 'live',
+    xtype: 'streams',
     
     config: {
-        title: 'Featured',
-        iconCls: 'favorites',
+        title: 'All',
+        iconCls: 'team',
         navigationBar: {
             items: [
                 {
@@ -42,17 +35,15 @@ Ext.define('sci.view.Live', {
                     maxWidth: 'auto',
                     minWidth: 'auto',
                     width: '110px',
-                    id: 'selctRaceBtn',
+                    id: 'selctRaceBtnAll',
+                    hidden: true,
                     options: [
-                        {text: 'All races',  value: 'a'},
-                        {text: 'terran', value: 't'},
-                        {text: 'protoss',  value: 'p'},
-                        {text: 'zerg',  value: 'z'}
+                        {text: 'All races',  value: 'a'}
                     ]
                 },
                 {
                     xtype: 'button',
-                    id: 'favoriteBtn',
+                    id: 'favoriteBtnAll',
                     iconCls: 'star',
                     iconMask: true,
                     ui: 'decline',
@@ -61,7 +52,7 @@ Ext.define('sci.view.Live', {
                 },
                 {
                     xtype: 'button',
-                    id: 'refreshLiveBtn',
+                    id: 'refreshLiveBtnAll',
                     iconCls: 'refresh',
                     iconMask: true,
                     ui: 'confirm',
@@ -71,21 +62,21 @@ Ext.define('sci.view.Live', {
         },
         listeners : {
             back: function() {
-                watchedStream = null;
-                Ext.getCmp('favoriteBtn').setHidden(true);
-                Ext.getCmp('refreshLiveBtn').setHidden(false);
-                Ext.getCmp('selctRaceBtn').setHidden(false);
+                watchedStreamAll = null;
+                Ext.getCmp('favoriteBtnAll').setHidden(true);
+                Ext.getCmp('refreshLiveBtnAll').setHidden(false);
+                //Ext.getCmp('selctRaceBtnAll').setHidden(false);
                 //TODO: show main buttons
             }
         },
         items: {
             xtype: 'list',
-            itemTpl: itemTplWithPrev,
-            title: 'Featured Streams',
-            id: 'streamslist',
+            itemTpl: itemTplWithPrevAll,
+            title: 'All Streams',
+            id: 'streamslistAll',
             plugins: [
                 {
-                    id: 'streamslistPaging',
+                    id: 'streamslistPagingAll',
                     xclass: 'Ext.plugin.ListPaging',
                     autoPaging: false,
                     applyLoadMoreCmp: function(config) {
@@ -98,10 +89,10 @@ Ext.define('sci.view.Live', {
                             listeners: {
                                 tap: {
                                     fn: function() {
-                                        var positionY = Ext.getCmp('streamslistPaging').getScroller().position.y;
-                                        itemsPage+=initItemsPage;
-                                        setRace();
-                                        Ext.getCmp('streamslistPaging').getScroller().scrollTo(null, positionY);
+                                        var positionY = Ext.getCmp('streamslistPagingAll').getScroller().position.y;
+                                        itemsPageAll+=initItemsPageAll;
+                                        setRaceAll();
+                                        Ext.getCmp('streamslistPagingAll').getScroller().scrollTo(null, positionY);
                                     },//this.loadNextPage,
                                     scope: this,
                                     element: 'element'

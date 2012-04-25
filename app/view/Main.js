@@ -11,6 +11,9 @@ Ext.define("sci.view.Main", {
                 xtype: 'live'
             },
             {
+                xtype: 'streams'
+            },
+            {
                 xtype: 'settings'
             }
         ]

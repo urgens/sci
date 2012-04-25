@@ -1,6 +1,10 @@
 var serverListLive = {};
 var favList = {};
 var watchedStreamId = null;
+var pagination = true;
+var initItemsPage = 5;
+var itemsPage = initItemsPage;
+
 var saveToStorage = function(player, stream, idstream) {
     if (typeof(localStorage) == 'undefined' ) {
         alert('Your browser does not support HTML5 localStorage. Try upgrading.');
@@ -79,34 +83,46 @@ var getStorage = function() {
         }
     }
 }
-var setRace = function(race) {
+var setRace = function() {
+        var race = Ext.getCmp('selctRaceBtn').getValue();
         Ext.getCmp('streamslist').up().setMasked({
             xtype: 'loadmask',
             message: 'Loading...'
         });
         var response = [];
+        var serverListLiveTemp = serverListLive.slice(0, itemsPage);
         var size = 0;
         switch(race) {
             case 'a':
-                response = serverListLive;
+                response = serverListLiveTemp;
                 break; 
             case 't':
             case 'p':
             case 'z':
-                for(x in serverListLive) {
-                    for(y in serverListLive[x].r) {
-                        if(serverListLive[x].r[y].t == race) {
-                            response[size++] = serverListLive[x]
+                for(x in serverListLiveTemp) {
+                    for(y in serverListLiveTemp[x].r) {
+                        if(serverListLiveTemp[x].r[y].t == race) {
+                            response[size++] = serverListLiveTemp[x]
                             break;
                         }
                     }
                 }
                 break;
         }
-        Ext.getCmp('streamslist').getStore().setData(response);
-        Ext.getCmp('streamslist').up().setMasked(false);
+        var streamList = Ext.getCmp('streamslist');
+        //streamList.setItemTpl(itemTplNonPrev);
+        streamList.setItemTpl(itemTplWithPrev);
+        var store = Ext.getCmp('streamslist').getStore();
+        store.setData(response);
+        if(serverListLive.length <= itemsPage) {
+            Ext.getCmp('streamslistPaging').getLoadMoreCmp().hide();
+        } else {
+            Ext.getCmp('streamslistPaging').getLoadMoreCmp().show();
+        }
+        streamList.up().setMasked(false);
 }
 var refreshList = function () {
+    itemsPage = initItemsPage;
     Ext.data.JsonP.request({
         url: 'https://spreadsheets.google.com/feeds/cells/0AvnajsweGK5WdDBuQVljMGVZQmtEZFVQeHFyUjVQamc/od6/public/basic/R1C1',
         params: {
@@ -148,7 +164,7 @@ var refreshList = function () {
             }
             
             serverListLive = response;
-            setRace(Ext.getCmp('selctRaceBtn').getValue());
+            setRace();
             //Ext.getCmp('streamslist').getStore().setData(response);
             //Ext.getCmp('streamslist').up().setMasked(false);
         },
@@ -186,8 +202,14 @@ Ext.define('sci.controller.Live', {
             },
             '#favoriteBtn': {
                 tap: 'manageFavorite'
+            },
+            '#dupadupa': {
+                activate: 'loadMoreStreams' 
             }
         }
+    },
+    loadMoreStreams: function(_1, _2, _3, _4) {
+        console.log('load moar!!!!');
     },
     manageFavorite: function() {
         //TODO: check for exists in favorite
@@ -252,7 +274,7 @@ Ext.define('sci.controller.Live', {
             xtype: 'panel',
             width: window.innerWidth,
             height: window.innerHeight-100,
-            title: 'stream',
+            title: record.get('n'),
             id: 'streamWindow',
             padding: 0,
             margin: 0,
@@ -266,7 +288,7 @@ Ext.define('sci.controller.Live', {
     changeListRace: function(select, newValue, oldValue, _0) {
         //change displayed race stream list
         //newValue.data.value
-        setRace(newValue.data.value);
+        setRace();
     },
     
     //called when the Application is launched, remove if not needed

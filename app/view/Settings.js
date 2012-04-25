@@ -12,7 +12,7 @@ Ext.define('sci.view.Settings', {
         scrollable: 'vertical',
         items: {
             xtype: 'panel',
-            title: 'Configure your app',
+            title: 'Configure app',
             styleHtmlContent: true,
             html: 'settings'
         }

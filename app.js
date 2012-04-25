@@ -5,7 +5,7 @@ Ext.Loader.setPath({
 //</debug>
 
 Ext.application({
-    controllers: ["Live"],
+    controllers: ["Streams", "Live"],
 
     name: 'sci',
 
@@ -13,7 +13,7 @@ Ext.application({
         'Ext.MessageBox'
     ],
 
-    views: ['Main', 'Info', 'Live', 'Settings'],
+    views: ['Main', 'Info', 'Live', 'Streams', 'Settings'],
 
     icon: {
         57: 'resources/icons/Icon.png',
