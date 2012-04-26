@@ -6,9 +6,12 @@ Ext.Loader.setPath({
 
 Ext.application({
     
+    refreshStatus: false,
+    refreshTime: 60000,
     serverListLive: null,
     favList: {},
     watchedStreamId: null,
+    showPreview: true,
     itemTplWithPrev: '<div style="display: -webkit-box; -webkit-box-orient: horizontal;">'+
                             '<div style="display: -webkit-box; width: 120px; height: 90px; margin-right: 20px">'+
                                 '<img width="120px" height="90px" src="{p}" />'+
@@ -88,6 +91,11 @@ Ext.application({
             //alert('Your browser does not support HTML5 localStorage. Try upgrading.');
             sci.app.favList =  eval('[]');
         } else {
+            if(localStorage.getItem("showPreview") == 'false') sci.app.showPreview = false;
+            else  sci.app.showPreview = true;
+            if(localStorage.getItem("pagination") == 'false') sci.app.paginationAll = false;
+            else  sci.app.paginationAll = true;
+            
             var needToSet = false;
             var temp = null;
             var size = localStorage.getItem("sizeFav");
@@ -163,7 +171,8 @@ Ext.application({
         }
         var streamList = Ext.getCmp('streamslist');
         //streamList.setItemTpl(sci.app.itemTplNonPrev);
-        streamList.setItemTpl(sci.app.itemTplWithPrev);
+        if(sci.app.showPreview) Ext.getCmp('streamslist').setItemTpl(sci.app.itemTplWithPrev);
+        else Ext.getCmp('streamslist').setItemTpl(sci.app.itemTplNonPrev);
         var store = Ext.getCmp('streamslist').getStore();
         store.setData(response);
         streamList.up().setMasked(false);
@@ -221,12 +230,14 @@ Ext.application({
     timeoutTask: null,
     
     refreshTask: function () {
-        Ext.getCmp('streamslist').up().setMasked({
-            xtype: 'loadmask',
-            message: 'Loading...'
-        });
-        this.refreshList();
-        this.timeoutTask = setTimeout("sci.app.refreshTask()", 150000);
+        if(sci.app.refreshStatus) {
+            Ext.getCmp('streamslist').up().setMasked({
+                xtype: 'loadmask',
+                message: 'Loading...'
+            });
+            sci.app.refreshList();
+            sci.app.timeoutTask = setTimeout("sci.app.refreshTask()", sci.app.refreshTime);
+        }
     },
     
     itemTplWithPrevAll: '<div style="display: -webkit-box; -webkit-box-orient: horizontal;">'+
@@ -260,13 +271,19 @@ Ext.application({
         });
         //TODO: settings with or without preview img
         //streamList.setItemTpl(sci.app.itemTplNonPrevAll);
-        streamListAll.setItemTpl(sci.app.itemTplWithPrevAll);
+        if(sci.app.showPreview) Ext.getCmp('streamslistAll').setItemTpl(sci.app.itemTplWithPrevAll);
+        else Ext.getCmp('streamslistAll').setItemTpl(sci.app.itemTplNonPrevAll);
         var store = Ext.getCmp('streamslistAll').getStore();
-        store.setData(sci.app.serverListLiveAll.slice(0, sci.app.itemsPageAll));
-        if(sci.app.serverListLiveAll.length <= sci.app.itemsPageAll) {
-            Ext.getCmp('streamslistPagingAll').getLoadMoreCmp().hide();
+        if(sci.app.paginationAll) {
+            store.setData(sci.app.serverListLiveAll.slice(0, sci.app.itemsPageAll));
+            if(sci.app.serverListLiveAll.length <= sci.app.itemsPageAll) {
+                Ext.getCmp('streamslistPagingAll').getLoadMoreCmp().hide();
+            } else {
+                Ext.getCmp('streamslistPagingAll').getLoadMoreCmp().show();
+            }
         } else {
-            Ext.getCmp('streamslistPagingAll').getLoadMoreCmp().show();
+            store.setData(sci.app.serverListLiveAll);
+            Ext.getCmp('streamslistPagingAll').getLoadMoreCmp().hide();
         }
         streamListAll.up().setMasked(false);
     },
@@ -318,7 +335,7 @@ Ext.application({
         });
     },
     
-    controllers: ["Streams", "Live"],
+    controllers: ["Settings", "Streams", "Live"],
 
     name: 'sci',
 

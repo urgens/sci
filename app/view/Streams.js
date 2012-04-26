@@ -55,7 +55,7 @@ Ext.define('sci.view.Streams', {
         items: {
             xtype: 'list',
             //itemTpl: sci.app.itemTplWithPrevAll,
-            title: 'Streams',
+            title: 'All Streams',
             id: 'streamslistAll',
             plugins: [
                 {

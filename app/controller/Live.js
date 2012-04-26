@@ -125,8 +125,8 @@ Ext.define('sci.controller.Live', {
     },
     //called when the Application is launched, remove if not needed
     launch: function(app) {
-
+        if(sci.app.showPreview) Ext.getCmp('streamslist').setItemTpl(sci.app.itemTplWithPrev);
+        else Ext.getCmp('streamslist').setItemTpl(sci.app.itemTplNonPrev);
         sci.app.refreshList();
-        sci.app.timeoutTask = setTimeout("sci.app.refreshTask()", 150000);
     }
 });

@@ -20,7 +20,7 @@ Ext.define('sci.view.Live', {
                     xtype: 'selectfield',
                     maxWidth: 'auto',
                     minWidth: 'auto',
-                    width: '110px',
+                    width: '130px',
                     id: 'selctRaceBtn',
                     options: [
                         {text: 'All races',  value: 'a'},
@@ -60,7 +60,7 @@ Ext.define('sci.view.Live', {
         items: {
             xtype: 'list',
             //itemTpl: sci.app.itemTplWithPrev,
-            title: 'Featured',
+            title: '',
             id: 'streamslist',
             //n - player name (server)
             //r - player race (server)

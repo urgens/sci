@@ -124,5 +124,7 @@ Ext.define('sci.controller.Streams', {
     
     //called when the Application is launched, remove if not needed
     launch: function(app) {
+        if(sci.app.showPreview) Ext.getCmp('streamslist').setItemTpl(sci.app.itemTplWithPrevAll);
+        else Ext.getCmp('streamslist').setItemTpl(sci.app.itemTplNonPrevAll);
     }
 });
